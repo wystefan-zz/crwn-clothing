@@ -47,11 +47,29 @@ export function* userSagas() {
     yield all([call(onGoogleSignInStart), call(onEmailSignInStart), call(onCheckUserSession)]);
 }
 
+/*
+    Because firebase method auth.onAuthStateChanged is not return a promise object which saga will need to rely on. We acheive that by creating a promise object 
+    by creating a helper method in firebase utils which shows as below. In this getCurrentUser method, it will return a promise with resolved value of userAuth if
+    userAuth returned by auth.onAuthStateChanged is not null. If it is null, the method will return a resolved value of null. If caught error, it will return reject value 
+    of error.
+
+    export const getCurrentUser = () => {
+    return new Promise((resolve, reject) => {
+        const unsubscribe = auth.onAuthStateChanged(userAuth => {
+            unsubscribe();
+            resolve(userAuth);
+        }, reject)
+    })
+}
+*/
 export function* isUserAuthenticated() {
     try {
-        const {userAuth} = yield getCurrentUser();
-        if (!userAuth) return;
-        yield getSnapshotFromUserAuth(userAuth);
+        /*
+         getCurrentUser is a helper method in firebase utils which created by wraping firebase auth.onAuthStateChanged method into method with a return value of promise type.
+         */
+        const {userAuth} = yield getCurrentUser(); 
+        if (!userAuth) return; // if current user is null, directly return without updating the current user
+        yield getSnapshotFromUserAuth(userAuth); // update the current user
     } catch (error) {
         yield put(signInFailure(error));
     }
