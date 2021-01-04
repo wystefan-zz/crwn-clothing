@@ -17,10 +17,6 @@ export function* fetchCollectionsAsync() {
     }
 }
 
-export function* fetchCollectionsStart() {
-    yield takeLatest(ShopActionTypes.FETCH_COLLECTIONS_START, fetchCollectionsAsync);
-}
-
 export function* shopSagas() {
-    yield all(call[fetchCollectionsStart]);
+    yield takeLatest(ShopActionTypes.FETCH_COLLECTIONS_START, fetchCollectionsAsync);
 }

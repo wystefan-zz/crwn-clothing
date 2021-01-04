@@ -30,10 +30,6 @@ export function* signInWithGoogle() {
     }
 }
 
-export function* onGoogleSignInStart() {
-    yield takeLatest(UserActionTypes.GOOGLE_SIGN_IN_START, signInWithGoogle)
-}
-
 export function* signInWithEmail({payload: {email, password}}) {
     try {
         const {user} = yield auth.signInWithEmailAndPassword(email, password);
@@ -41,14 +37,6 @@ export function* signInWithEmail({payload: {email, password}}) {
     } catch (error) {
         yield put(signInFailure(error));
     }
-}
-
-export function* onEmailSignInStart() {
-    yield takeLatest(UserActionTypes.EMAIL_SIGN_IN_START, signInWithEmail)
-}
-
-export function* userSagas() {
-    yield all([call(onGoogleSignInStart), call(onEmailSignInStart), call(onCheckUserSession), call(onSignOutStart), call(onSignUpStart), call(onSignUpSuccess)]);
 }
 
 /*
@@ -79,10 +67,6 @@ export function* isUserAuthenticated() {
     }
 }
 
-export function* onCheckUserSession() {
-    yield takeLatest(UserActionTypes.CHECK_USER_SESSION, isUserAuthenticated);
-}
-
 export function* signOut() {
     try {
         yield auth.signOut();
@@ -90,10 +74,6 @@ export function* signOut() {
     } catch (error) {
         yield put(signOutFailure(error));
     }
-}
-
-export function* onSignOutStart() {
-    yield takeLatest(UserActionTypes.SIGN_OUT_START, signOut);
 }
 
 export function* signUp({payload: {email, password, displayName}}) {
@@ -113,10 +93,11 @@ export function* signInAfterSignUp({payload: {user, additionalData}}) {
     yield getSnapshotFromUserAuth(user, additionalData);
 }
 
-export function* onSignUpSuccess() {
-    yield takeLatest(UserActionTypes.SIGN_UP_SUCCESS, signInAfterSignUp);
-}
-
-export function* onSignUpStart() {
+export function* userSagas() {
+    yield takeLatest(UserActionTypes.EMAIL_SIGN_IN_START, signInWithEmail);
+    yield takeLatest(UserActionTypes.GOOGLE_SIGN_IN_START, signInWithGoogle);
     yield takeLatest(UserActionTypes.SIGN_UP_START, signUp);
+    yield takeLatest(UserActionTypes.SIGN_UP_SUCCESS, signInAfterSignUp);
+    yield takeLatest(UserActionTypes.SIGN_OUT_START, signOut);
+    yield takeLatest(UserActionTypes.CHECK_USER_SESSION, isUserAuthenticated);
 }

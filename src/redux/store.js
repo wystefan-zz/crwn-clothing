@@ -2,9 +2,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import logger from 'redux-logger';
 import {persistStore} from 'redux-persist';
 import rootReducer from './root-reducer';
-import thunk from 'redux-thunk';
 import createSagaMiddleware from 'redux-saga';
-import {fetchCollectionsStart} from './shop/shop.sagas';
 import rootSaga from './root-saga';
 
 const sagaMiddleware = createSagaMiddleware();
@@ -26,5 +24,7 @@ export const store = createStore(rootReducer, /* preloadedState, */ composeEnhan
 sagaMiddleware.run(rootSaga);
 
 export const persistor = persistStore(store);
+
+export default {store, persistStore};
 
 

@@ -2,13 +2,11 @@ import React, {useState} from 'react';
 import './sign-in.styles.scss';
 import FormInput from '../form-input/form-input.component';
 import CustomButton from '../custom-button/custom-button.component';
-import { auth, signInWithGoogle } from '../../firebase/firebase.utils';
 import {googleSignInStart, emailSignInStart} from '../../redux/user/user.actions';
 import {connect} from 'react-redux';
-import { render } from '@testing-library/react';
 
 
-const SignIn = (emailSignInStart, googleSignInStart) => {
+const SignIn = ({emailSignInStart, googleSignInStart}) => {
     
     const [userCredentials, setCredentials] = useState({email: '', password: ''});
     const {email, password} = userCredentials;
@@ -20,7 +18,7 @@ const SignIn = (emailSignInStart, googleSignInStart) => {
 
     const handleChange = event => {
         const { value, name } = event.target;
-        this.setCredentials({...userCredentials, [name]: value});
+        setCredentials({...userCredentials, [name]: value});
     }
     
     return(
