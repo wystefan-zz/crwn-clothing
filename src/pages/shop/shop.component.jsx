@@ -9,23 +9,21 @@ import {firestore, convertCollectionsSnapshotToMap} from '../../firebase/firebas
 import {fetchCollectionsStart} from '../../redux/shop/shop.actions';
 import {createStructuredSelector} from 'reselect';
 import {selectIsCollectionFetching, selectIsCollectionsLoaded} from '../../redux/shop/shop.selectors';
+import { useEffect } from 'react';
 
-class ShopPage extends React.Component {
-    componentDidMount() {
-        const {fetchCollectionsStart} = this.props;
+const ShopPage = ({fetchCollectionsStart, match}) => {
+    
+    useEffect(() => {
         fetchCollectionsStart();
-    }
-
-    render() {
-        const {match} = this.props;
-        
-        return (
-            <div className='shop-page'>
-                    <Route exact path={`${match.path}`} component={CollectionsOverviewContainer} />
-                    <Route path={`${match.path}/:collectionId`} 
-                        component={CollectionPageContainer} />
-            </div>);
-    }
+    }, [fetchCollectionsStart])
+            
+    return (
+        <div className='shop-page'>
+                <Route exact path={`${match.path}`} component={CollectionsOverviewContainer} />
+                <Route path={`${match.path}/:collectionId`} 
+                    component={CollectionPageContainer} />
+        </div>);
+    
 }  
 
 const mapDispatchToProps = dispatch => ({
